@@ -226,6 +226,8 @@ def get_script_hashes():
     
     for file in files:
         if file['type'] == 'blob':
+            if file['name'].lower() == 'readme.md':  # Ignore README.md
+                continue
             script_url = f"{GITLAB_URL}/api/v4/projects/{GITLAB_PROJECT_ID}/repository/files/{file['path'].replace('/', '%2F')}/raw?ref=main"
             script_response = requests.get(script_url, headers=headers)
             if script_response.status_code == 200:
@@ -235,7 +237,7 @@ def get_script_hashes():
                     'script': {
                         'name': file['name'],
                         'script_body': script_content,
-                        'webhook_hash': script_hash  # Changed key to 'webhook_hash'
+                        'webhook_hash': script_hash
                     }
                 })
     return scripts
